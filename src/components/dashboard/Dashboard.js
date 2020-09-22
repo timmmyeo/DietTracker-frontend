@@ -6,96 +6,273 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid'
 import { UserContext } from "../auth/UserProvider"
+import { PieChart, Pie, Tooltip, Cell } from "recharts"
+import TextField from "@material-ui/core/TextField"
+import { firestore as db, auth } from "../../config/firebaseConfig"
 
 export default function Dashboard() {
   const user = React.useContext(UserContext);
+  const [gotUserData, setGotUserData] = React.useState(false);
+  const [messengerId, setMessengerId] = React.useState('');
+  const [userData, setUserData] = React.useState(null);
+  const [data, setData] = React.useState({
+    calories:
+    [
+      {
+        "name": "Calories",
+        "value": 0,
+        "colour": "#8884d8"
+      },
+      {
+        "name": "Remaining",
+        "value": 2000,
+        "colour": "#82ca9d"
+      },
+    ],
+    fat:
+    [
+      {
+        "name": "Calories",
+        "value": 0,
+        "colour": "#8884d8"
+      },
+      {
+        "name": "Remaining",
+        "value": 2000,
+        "colour": "#82ca9d"
+      }
+    ],
+    protein:
+    [
+      {
+        "name": "Calories",
+        "value": 0,
+        "colour": "#8884d8"
+      },
+      {
+        "name": "Remaining",
+        "value": 2000,
+        "colour": "#82ca9d"
+      },
+    ],
+    sodium:
+    [
+      {
+        "name": "Calories",
+        "value": 0,
+        "colour": "#8884d8"
+      },
+      {
+        "name": "Remaining",
+        "value": 2000,
+        "colour": "#82ca9d"
+      },
+    ]
+  })
+
+
+
+  // React.useEffect(() => {
+  //   let unsubscribe = () =>{}
+  //   console.log(user);
+  //   if (user) {
+  //     console.log("We are reading!")
+  //     const today = new Date();
+  //     const dd = String(today.getDate()).padStart(2, '0');
+  //     const mm = String(today.getMonth() + 1).padStart(2, '0');
+  //     const yyyy = today.getFullYear();
+
+  //     const todayString = dd + '-' + mm + '-' + yyyy;
+
+
+  //     var docRef = db.collection("users").doc(user.uid);
+
+  //     docRef.get().then(function(doc) {
+  //         if (doc.exists) {
+  //             console.log("User ID:", user.uid)
+  //             console.log("Document data:", doc.data());
+  //         } else {
+  //             // doc.data() will be undefined in this case
+  //             console.log("No such document!");
+  //             console.log(user.uid);
+  //         }
+  //     }).catch(function(error) {
+  //         console.log("Error getting document:", error);
+  //     });
+  //   }
+  //   else {
+  //     console.log("Loading data...");
+  //   }
+
+  //   return () => {
+  //     console.log("Cleaning up!");
+  //     unsubscribe();
+  //   }
+  // }, [user]);
+
+  function handleSubmit(e) {
+    setMessengerId('')
+    e.preventDefault();
+    console.log("We are reading!")
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+
+    const todayString = dd + '-' + mm + '-' + yyyy;
+
+
+    var docRef = db.collection("users").doc(messengerId);
+    // 3459299480758874
+    docRef.get().then(function(doc) {
+        if (doc.exists) {
+          const todayData = doc.data()[todayString];
+          if (todayData === undefined) {
+            alert("Looks like you haven't eaten anything today!")
+          }
+          else {
+            setUserData(todayData)
+          }
+          
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+            console.log(user.uid);
+            alert("Looks like you don't exist in our database yet!")
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+        alert("Something went wrong...")
+    });
+  }
+
+  function handleChange(e) {
+    setMessengerId(e.target.value);
+  }
 
   return (
     <>
       {
         user ?
         <Grid container spacing={2}>
-        <Grid item xs={3}>
+          <Grid item xs={12} align="center">
+            <form autoComplete="off" onSubmit={handleSubmit}>
+              <TextField onChange={handleChange} value={messengerId} id="messenger-id" label="Messenger ID" />
+              <Button type="submit">Submit</Button>
+            </form>
+            
+          </Grid>
+          <br />
+
+          <Grid item xs={12}>
+            <Typography variant="h3" gutterBottom>Total stats for today:</Typography>
+          </Grid>
+
+        <Grid item xs={12} sm={6} md={3} align="center">
+          
           <Card>
             <CardContent>
               <Typography variant="h5" components="h2" gutterBottom>
-                Word of the Day
+                Calories
               </Typography>
-              <Typography color="textSecondary">
-                adjective
-              </Typography>
-              <Typography variant="body2" component="p">
-                well meaning and kindly.
-                <br />
-                {'"a benevolent smile"'}
-              </Typography>
+                <PieChart width={300} height={250}>
+                  <Pie
+                      data={data.calories} 
+                      dataKey="value"
+                      cx="50%" 
+                      cy="50%" 
+                      innerRadius={60}
+                      outerRadius={80} 
+                      paddingAngle={5}
+                    >
+                      {
+                        data.calories.map((entry) => <Cell fill={entry.colour}/>)
+                      }
+                    </Pie>
+                  <Tooltip />
+                </PieChart>
             </CardContent>
-            <CardActions>
-              <Button size="small">Learn More</Button>
-            </CardActions>
           </Card>
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3} align="center">
+          
           <Card>
             <CardContent>
               <Typography variant="h5" components="h2" gutterBottom>
-                Word of the Day
+                Fat
               </Typography>
-              <Typography color="textSecondary">
-                adjective
-              </Typography>
-              <Typography variant="body2" component="p">
-                well meaning and kindly.
-                <br />
-                {'"a benevolent smile"'}
-              </Typography>
+                <PieChart width={300} height={250}>
+                  <Pie
+                      data={data.fat} 
+                      dataKey="value"
+                      cx="50%" 
+                      cy="50%" 
+                      innerRadius={60}
+                      outerRadius={80} 
+                      paddingAngle={5}
+                    >
+                      {
+                        data.fat.map((entry) => <Cell fill={entry.colour}/>)
+                      }
+                    </Pie>
+                  <Tooltip />
+                </PieChart>
             </CardContent>
-            <CardActions>
-              <Button size="small">Learn More</Button>
-            </CardActions>
           </Card>
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3} align="center">
+          
           <Card>
             <CardContent>
               <Typography variant="h5" components="h2" gutterBottom>
-                Word of the Day
+                Protein
               </Typography>
-              <Typography color="textSecondary">
-                adjective
-              </Typography>
-              <Typography variant="body2" component="p">
-                well meaning and kindly.
-                <br />
-                {'"a benevolent smile"'}
-              </Typography>
+                <PieChart width={300} height={250}>
+                  <Pie
+                      data={data.protein} 
+                      dataKey="value"
+                      cx="50%" 
+                      cy="50%" 
+                      innerRadius={60}
+                      outerRadius={80} 
+                      paddingAngle={5}
+                    >
+                      {
+                        data.protein.map((entry) => <Cell fill={entry.colour}/>)
+                      }
+                    </Pie>
+                  <Tooltip />
+                </PieChart>
             </CardContent>
-            <CardActions>
-              <Button size="small">Learn More</Button>
-            </CardActions>
           </Card>
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3} align="center">
+          
           <Card>
             <CardContent>
               <Typography variant="h5" components="h2" gutterBottom>
-                Word of the Day
+                Sodium
               </Typography>
-              <Typography color="textSecondary">
-                adjective
-              </Typography>
-              <Typography variant="body2" component="p">
-                well meaning and kindly.
-                <br />
-                {'"a benevolent smile"'}
-              </Typography>
+                <PieChart width={300} height={250}>
+                  <Pie
+                      data={data.sodium} 
+                      dataKey="value"
+                      cx="50%" 
+                      cy="50%" 
+                      innerRadius={60}
+                      outerRadius={80} 
+                      paddingAngle={5}
+                    >
+                      {
+                        data.sodium.map((entry) => <Cell fill={entry.colour}/>)
+                      }
+                    </Pie>
+                  <Tooltip />
+                </PieChart>
             </CardContent>
-            <CardActions>
-              <Button size="small">Learn More</Button>
-            </CardActions>
           </Card>
         </Grid>
 

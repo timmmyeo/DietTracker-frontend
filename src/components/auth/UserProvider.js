@@ -1,23 +1,18 @@
-import React, { Component, createContext } from "react";
+import React, { Component, createContext, useEffect } from "react";
 import { auth } from "../../config/firebaseConfig";
 
-export const UserContext = createContext({ user: null });
-class UserProvider extends Component {
-  state = {
-    user: null
-  };
+export const UserContext = createContext(null);
+function UserProvider(props) {
+  const [user, setUser] = React.useState(null);
 
-  componentDidMount = () => {
-    auth.onAuthStateChanged(userAuth => {
-      this.setState({ user: userAuth});
-    });
-  };
-  render() {
+  useEffect(() => {
+      auth.onAuthStateChanged(userAuth => setUser(userAuth));
+    }
+  )
     return (
-      <UserContext.Provider value={this.state.user}>
-        {this.props.children}
+      <UserContext.Provider value={user}>
+        {props.children}
       </UserContext.Provider>
     );
-  }
-}
+    }
 export default UserProvider;
