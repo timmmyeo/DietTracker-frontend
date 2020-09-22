@@ -3,6 +3,7 @@ import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Dashboard from './components/dashboard/Dashboard'
 import SignIn from './components/auth/SignIn'
+import SetMessengerID from "./components/dashboard/SetMessengerId"
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       <Navbar />
       <Switch>      
         <Route exact path='/' component={Dashboard} />
-        <Route path='/login' component={SignIn} />
+        <Route exact path='/login' component={SignIn} />
+        <Route exact path='/messengerID' component={SetMessengerID} />
       </Switch>
     </BrowserRouter>
   );

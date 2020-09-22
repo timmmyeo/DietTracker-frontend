@@ -12,7 +12,8 @@ export default function SignedInLinks()  {
   return (
     <>
       <Button color="inherit">Login</Button>
-      <Button color="inherit">Test</Button>
+      <Button color="inherit">Dashboard</Button>
+      <Button color="inherit">Set Messenger ID</Button>
     </>
   )
 }

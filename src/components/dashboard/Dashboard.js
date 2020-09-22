@@ -14,7 +14,6 @@ export default function Dashboard() {
   const user = React.useContext(UserContext);
   const [gotUserData, setGotUserData] = React.useState(false);
   const [messengerId, setMessengerId] = React.useState('');
-  const [userData, setUserData] = React.useState(null);
   const [data, setData] = React.useState({
     calories:
     [
@@ -122,7 +121,7 @@ export default function Dashboard() {
     const todayString = dd + '-' + mm + '-' + yyyy;
 
 
-    var docRef = db.collection("users").doc(messengerId);
+    const docRef = db.collection("users").doc(messengerId);
     // 3459299480758874
     docRef.get().then(function(doc) {
         if (doc.exists) {
@@ -131,7 +130,60 @@ export default function Dashboard() {
             alert("Looks like you haven't eaten anything today!")
           }
           else {
-            setUserData(todayData)
+            setData({
+              calories:
+              [
+                {
+                  "name": "Calories",
+                  "value": todayData['total_nutrition']["calories"],
+                  "colour": "#8884d8"
+                },
+                {
+                  "name": "Remaining",
+                  "value": 2000 - todayData['total_nutrition']["calories"],
+                  "colour": "#82ca9d"
+                },
+              ],
+              fat:
+              [
+                {
+                  "name": "Fat",
+                  "value": todayData['total_nutrition']['fat_g'],
+                  "colour": "#8884d8"
+                },
+                {
+                  "name": "Remaining",
+                  "value": 70 - todayData['total_nutrition']['fat_g'],
+                  "colour": "#82ca9d"
+                }
+              ],
+              protein:
+              [
+                {
+                  "name": "Protein",
+                  "value": todayData['total_nutrition']["protein_g"],
+                  "colour": "#8884d8"
+                },
+                {
+                  "name": "Remaining",
+                  "value": 50 - todayData['total_nutrition']["protein_g"],
+                  "colour": "#82ca9d"
+                },
+              ],
+              sodium:
+              [
+                {
+                  "name": "Sodium",
+                  "value": todayData['total_nutrition']["sodium_mg"],
+                  "colour": "#8884d8"
+                },
+                {
+                  "name": "Remaining",
+                  "value": 6000 - todayData['total_nutrition']["sodium_mg"],
+                  "colour": "#82ca9d"
+                },
+              ]
+            })
           }
           
         } else {
