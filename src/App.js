@@ -10,7 +10,7 @@ function App() {
       <Navbar />
       <Switch>      
         <Route exact path='/' component={Dashboard} />
-        <Route path='/signin' component={SignIn} />
+        <Route path='/login' component={SignIn} />
       </Switch>
     </BrowserRouter>
   );
