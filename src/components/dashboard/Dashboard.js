@@ -12,8 +12,8 @@ import { firestore as db, auth } from "../../config/firebaseConfig"
 
 export default function Dashboard() {
   const user = React.useContext(UserContext);
+  const [messengerId, setMessengerId] = React.useState(null);
   const [gotUserData, setGotUserData] = React.useState(false);
-  const [messengerId, setMessengerId] = React.useState('');
   const [data, setData] = React.useState({
     calories:
     [
@@ -69,6 +69,31 @@ export default function Dashboard() {
     ]
   })
 
+  React.useEffect(() => {
+    
+    if (user) {
+      const docRef = db.collection("messengerID").doc(user.uid);
+
+      docRef.get().then(function(doc) {
+        if (doc.exists) {
+          setMessengerId(doc.data()['id'])
+          if (messengerId !== null) {
+            getData();
+          }
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+            console.log(user.uid);
+        }
+      }).catch(function(error) {
+        console.log("Error getting document:", error);
+        alert("Something went wrong...1")
+      });
+      
+
+    }
+  }, [user, messengerId]);
+
 
 
   // React.useEffect(() => {
@@ -109,9 +134,7 @@ export default function Dashboard() {
   //   }
   // }, [user]);
 
-  function handleSubmit(e) {
-    setMessengerId('')
-    e.preventDefault();
+  function getData() {
     console.log("We are reading!")
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
@@ -198,23 +221,12 @@ export default function Dashboard() {
     });
   }
 
-  function handleChange(e) {
-    setMessengerId(e.target.value);
-  }
 
   return (
     <>
       {
         user ?
         <Grid container spacing={2}>
-          <Grid item xs={12} align="center">
-            <form autoComplete="off" onSubmit={handleSubmit}>
-              <TextField onChange={handleChange} value={messengerId} id="messenger-id" label="Messenger ID" />
-              <Button type="submit">Submit</Button>
-            </form>
-            
-          </Grid>
-          <br />
 
           <Grid item xs={12}>
             <Typography variant="h3" gutterBottom>Total stats for today:</Typography>
