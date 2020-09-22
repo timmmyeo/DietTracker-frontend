@@ -1,15 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid'
+import { UserContext } from "../auth/UserProvider"
 
-class Dashboard extends Component {
-  render() {
-    return (
-      <Grid container spacing={2}>
+export default function Dashboard() {
+  const user = React.useContext(UserContext);
+
+  return (
+    <>
+      {
+        user ?
+        <Grid container spacing={2}>
         <Grid item xs={3}>
           <Card>
             <CardContent>
@@ -95,8 +100,12 @@ class Dashboard extends Component {
         </Grid>
 
       </Grid>
-    )
-  }
+      :
+      <>
+        <Typography>Please sign in!</Typography>
+      </>
+      }
+    </>
+    
+  )
 }
-
-export default Dashboard

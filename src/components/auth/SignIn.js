@@ -12,7 +12,7 @@ export default function SignIn() {
     {
       user ? 
       <>
-        <Typography>You are now signed in!</Typography>
+        <Typography>You are now logged in!</Typography>
         <Button variant="contained" color="primary" onClick={signOut}>{
           <p>Log out!</p>
         }
@@ -20,7 +20,7 @@ export default function SignIn() {
       </>
       :
       <>
-        <Typography>Please sign in!</Typography>
+        <Typography>Please log in!</Typography>
         <Button variant="contained" color="primary" onClick={signInWithFacebook}>{
           <p>Log in!</p>
         }
