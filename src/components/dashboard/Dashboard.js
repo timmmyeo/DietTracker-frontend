@@ -10,12 +10,15 @@ import { PieChart, Pie, Tooltip, Cell } from "recharts"
 import TextField from "@material-ui/core/TextField"
 import { firestore as db, auth } from "../../config/firebaseConfig"
 import TodayNutrition from './TodayNutrition';
+import { todayDate, last7Days } from "./generateDates"
+import Last7DaysNutrition from "./Last7DaysNutrition"
 
 export default function Dashboard() {
   const user = React.useContext(UserContext);
   const [messengerId, setMessengerId] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-  const [data, setData] = React.useState({
+  const [last7DaysData, setlast7DaysData] = React.useState(Array(7).fill({calories: 0, fat: 0, protein: 0, sodium: 0}));
+  const [todayData, setTodayData] = React.useState({
     calories:
     [
       {
@@ -73,34 +76,28 @@ export default function Dashboard() {
   React.useEffect(() => {
     function getData() {
       console.log("We are reading!")
-      const today = new Date();
-      const dd = String(today.getDate()).padStart(2, '0');
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const yyyy = today.getFullYear();
-  
-      const todayString = dd + '-' + mm + '-' + yyyy;
+      const todayString = todayDate();
   
   
       const docRef = db.collection("users").doc(messengerId);
-      // 3459299480758874
       docRef.get().then(function(doc) {
           if (doc.exists) {
-            const todayData = doc.data()[todayString];
-            if (todayData === undefined) {
+            const todayDataTemp = doc.data()[todayString];
+            if (todayDataTemp === undefined) {
               alert("Looks like you haven't eaten anything today!")
             }
             else {
-              setData({
+              setTodayData({
                 calories:
                 [
                   {
                     "name": "Calories",
-                    "value": todayData['total_nutrition']["calories"],
+                    "value": todayDataTemp['total_nutrition']["calories"],
                     "colour": "#8884d8"
                   },
                   {
                     "name": "Remaining",
-                    "value": 2000 - todayData['total_nutrition']["calories"],
+                    "value": 2000 - todayDataTemp['total_nutrition']["calories"],
                     "colour": "#82ca9d"
                   },
                 ],
@@ -108,12 +105,12 @@ export default function Dashboard() {
                 [
                   {
                     "name": "Fat",
-                    "value": todayData['total_nutrition']['fat_g'],
+                    "value": todayDataTemp['total_nutrition']['fat_g'],
                     "colour": "#8884d8"
                   },
                   {
                     "name": "Remaining",
-                    "value": 70 - todayData['total_nutrition']['fat_g'],
+                    "value": 70 - todayDataTemp['total_nutrition']['fat_g'],
                     "colour": "#82ca9d"
                   }
                 ],
@@ -121,12 +118,12 @@ export default function Dashboard() {
                 [
                   {
                     "name": "Protein",
-                    "value": todayData['total_nutrition']["protein_g"],
+                    "value": todayDataTemp['total_nutrition']["protein_g"],
                     "colour": "#8884d8"
                   },
                   {
                     "name": "Remaining",
-                    "value": 50 - todayData['total_nutrition']["protein_g"],
+                    "value": 50 - todayDataTemp['total_nutrition']["protein_g"],
                     "colour": "#82ca9d"
                   },
                 ],
@@ -134,17 +131,37 @@ export default function Dashboard() {
                 [
                   {
                     "name": "Sodium",
-                    "value": todayData['total_nutrition']["sodium_mg"],
+                    "value": todayDataTemp['total_nutrition']["sodium_mg"],
                     "colour": "#8884d8"
                   },
                   {
                     "name": "Remaining",
-                    "value": 6000 - todayData['total_nutrition']["sodium_mg"],
+                    "value": 6000 - todayDataTemp['total_nutrition']["sodium_mg"],
                     "colour": "#82ca9d"
                   },
                 ]
               })
             }
+
+            const last7DaysStrings = last7Days();
+            let last7DaysDataTemp = []
+            last7DaysStrings.forEach(function(date) {
+              const dateTemp = doc.data()[date];
+              if (dateTemp === undefined) {
+                last7DaysDataTemp.push({calories: 0, fat: 0, protein: 0, sodium: 0})
+              }
+              else {
+                last7DaysDataTemp.push({
+                  calories: dateTemp['total_nutrition']["calories"], 
+                  fat: dateTemp['total_nutrition']["fat_g"], 
+                  protein: dateTemp['total_nutrition']["protein_g"], 
+                  sodium: dateTemp['total_nutrition']["sodium_mg"]
+                })
+              }
+            })
+            setlast7DaysData(last7DaysDataTemp)
+
+            
             
           } else {
               // doc.data() will be undefined in this case
@@ -166,7 +183,6 @@ export default function Dashboard() {
           setMessengerId(doc.data()['id'])
           if (messengerId !== null) {
             getData();
-            setLoading(false);
           }
         } else {
             // doc.data() will be undefined in this case
@@ -187,49 +203,6 @@ export default function Dashboard() {
     }
   }, [user, messengerId]);
 
-
-
-  // React.useEffect(() => {
-  //   let unsubscribe = () =>{}
-  //   console.log(user);
-  //   if (user) {
-  //     console.log("We are reading!")
-  //     const today = new Date();
-  //     const dd = String(today.getDate()).padStart(2, '0');
-  //     const mm = String(today.getMonth() + 1).padStart(2, '0');
-  //     const yyyy = today.getFullYear();
-
-  //     const todayString = dd + '-' + mm + '-' + yyyy;
-
-
-  //     var docRef = db.collection("users").doc(user.uid);
-
-  //     docRef.get().then(function(doc) {
-  //         if (doc.exists) {
-  //             console.log("User ID:", user.uid)
-  //             console.log("Document data:", doc.data());
-  //         } else {
-  //             // doc.data() will be undefined in this case
-  //             console.log("No such document!");
-  //             console.log(user.uid);
-  //         }
-  //     }).catch(function(error) {
-  //         console.log("Error getting document:", error);
-  //     });
-  //   }
-  //   else {
-  //     console.log("Loading data...");
-  //   }
-
-  //   return () => {
-  //     console.log("Cleaning up!");
-  //     unsubscribe();
-  //   }
-  // }, [user]);
-
-  
-
-
   return (
     <>
       {
@@ -240,7 +213,9 @@ export default function Dashboard() {
             <Typography variant="h3" gutterBottom>Total stats for today:</Typography>
           </Grid>
 
-          <TodayNutrition data={data} />
+          <TodayNutrition data={todayData} />
+
+          <Last7DaysNutrition data={last7DaysData} />
 
         </Grid>
       :
