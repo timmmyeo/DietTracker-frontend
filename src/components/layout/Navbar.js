@@ -30,7 +30,6 @@ export default function Navbar() {
         </Typography>
         
         <SignedInLinks />
-        <SignedOutLinks />
 
       </Toolbar>
     </AppBar>
