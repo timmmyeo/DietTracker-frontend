@@ -1,14 +1,8 @@
 import React from 'react';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid'
 import { UserContext } from "../auth/UserProvider"
-import { PieChart, Pie, Tooltip, Cell } from "recharts"
-import TextField from "@material-ui/core/TextField"
-import { firestore as db, auth } from "../../config/firebaseConfig"
+import { firestore as db } from "../../config/firebaseConfig"
 import TodayNutrition from './TodayNutrition';
 import { todayDate, last7Days } from "./generateDates"
 import Last7DaysNutrition from "./Last7DaysNutrition"

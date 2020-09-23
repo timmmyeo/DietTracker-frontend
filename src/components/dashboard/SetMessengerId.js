@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import Typography from "@material-ui/core/Typography"
 import { UserContext } from "../auth/UserProvider"
-import { firestore as db, auth } from "../../config/firebaseConfig"
+import { firestore as db } from "../../config/firebaseConfig"
 import TextField from "@material-ui/core/TextField"
 import LinearProgress from '@material-ui/core/LinearProgress';
 

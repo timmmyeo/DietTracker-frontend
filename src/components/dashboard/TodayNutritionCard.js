@@ -28,7 +28,7 @@ export default function todayNutritionCard(props) {
                 paddingAngle={5}
               >
                 {
-                  props.cardData.map((entry) => <Cell fill={entry.colour}/>)
+                  props.cardData.map((entry, index) => <Cell key={index} fill={entry.colour}/>)
                 }
               </Pie>
             <Tooltip />

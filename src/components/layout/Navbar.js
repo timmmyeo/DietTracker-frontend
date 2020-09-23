@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
 import SignedInLinks from './SignedInLinks'
-import SignedOutLinks from './SignedOutLinks'
 
 const useStyles = makeStyles((theme) => ({
   root: {
