@@ -29,39 +29,39 @@ export default function Dashboard() {
     fat:
     [
       {
-        "name": "Calories",
+        "name": "Fat",
         "value": 0,
         "colour": "#8884d8"
       },
       {
         "name": "Remaining",
-        "value": 2000,
+        "value": 70,
         "colour": "#82ca9d"
       }
     ],
     protein:
     [
       {
-        "name": "Calories",
+        "name": "Protein",
         "value": 0,
         "colour": "#8884d8"
       },
       {
         "name": "Remaining",
-        "value": 2000,
+        "value": 50,
         "colour": "#82ca9d"
       },
     ],
     sodium:
     [
       {
-        "name": "Calories",
+        "name": "Sodium",
         "value": 0,
         "colour": "#8884d8"
       },
       {
         "name": "Remaining",
-        "value": 2000,
+        "value": 6000,
         "colour": "#82ca9d"
       },
     ]
@@ -81,17 +81,21 @@ export default function Dashboard() {
               alert("Looks like you haven't eaten anything today!")
             }
             else {
+              const calories = todayDataTemp['total_nutrition']["calories"];
+              const fat = todayDataTemp['total_nutrition']['fat_g'];
+              const protein = todayDataTemp['total_nutrition']["protein_g"];
+              const sodium = todayDataTemp['total_nutrition']["sodium_mg"]
               setTodayData({
                 calories:
                 [
                   {
                     "name": "Calories",
-                    "value": todayDataTemp['total_nutrition']["calories"],
+                    "value": calories,
                     "colour": "#8884d8"
                   },
                   {
                     "name": "Remaining",
-                    "value": 2000 - todayDataTemp['total_nutrition']["calories"],
+                    "value": calories > 2000 ? 0 : 2000 - calories,
                     "colour": "#82ca9d"
                   },
                 ],
@@ -99,12 +103,12 @@ export default function Dashboard() {
                 [
                   {
                     "name": "Fat",
-                    "value": todayDataTemp['total_nutrition']['fat_g'],
+                    "value": fat,
                     "colour": "#8884d8"
                   },
                   {
                     "name": "Remaining",
-                    "value": 70 - todayDataTemp['total_nutrition']['fat_g'],
+                    "value": fat > 70 ? 0 : 70 - fat,
                     "colour": "#82ca9d"
                   }
                 ],
@@ -112,12 +116,12 @@ export default function Dashboard() {
                 [
                   {
                     "name": "Protein",
-                    "value": todayDataTemp['total_nutrition']["protein_g"],
+                    "value": protein,
                     "colour": "#8884d8"
                   },
                   {
                     "name": "Remaining",
-                    "value": 50 - todayDataTemp['total_nutrition']["protein_g"],
+                    "value": protein > 50 ? 0 : 50 - protein,
                     "colour": "#82ca9d"
                   },
                 ],
@@ -125,12 +129,12 @@ export default function Dashboard() {
                 [
                   {
                     "name": "Sodium",
-                    "value": todayDataTemp['total_nutrition']["sodium_mg"],
+                    "value": sodium,
                     "colour": "#8884d8"
                   },
                   {
                     "name": "Remaining",
-                    "value": 6000 - todayDataTemp['total_nutrition']["sodium_mg"],
+                    "value": sodium > 6000 ? 0 : 6000 - sodium,
                     "colour": "#82ca9d"
                   },
                 ]
@@ -204,10 +208,14 @@ export default function Dashboard() {
         <Grid container spacing={2}>
 
           <Grid item xs={12}>
-            <Typography variant="h3" gutterBottom>Total stats for today:</Typography>
+            <Typography variant="h3" gutterBottom>Total nutrition for today:</Typography>
           </Grid>
 
           <TodayNutrition data={todayData} />
+
+          <Grid item xs={12}>
+            <Typography variant="h3" gutterBottom>Total nutrition for the past 7 days:</Typography>
+          </Grid>
 
           <Last7DaysNutrition data={last7DaysData} />
 
